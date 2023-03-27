@@ -7,25 +7,23 @@ namespace HomeWork1
     sealed class Program
     {
         static void Main()
-        {
-            var session = DbInfoService.GetSession();
-
+        {           
             Console.WriteLine("Что будем делать? \n1-читать\n2-писать");
             var action = Console.ReadLine();
             switch (action)
             {
                 case "1":
-                    ReadInfo(session);
+                    ReadInfo();
                     break;
                 case "2":
-                    AddInfo(session);
+                    AddInfo();
                     break;
             }
 
             Console.ReadKey();
         }
 
-        private static void ReadInfo(ISession session)
+        private static void ReadInfo()
         {
             var tableNames = DbInfoService.GetTableNames();
 
@@ -37,9 +35,9 @@ namespace HomeWork1
 
             var tableName = GetOutputInterface(tableNames);
 
-            IRepository<Basket> baskets = new Repository<Basket>(session);
-            IRepository<Goods> goods = new Repository<Goods>(session);
-            IRepository<User> users = new Repository<User>(session);
+            IRepository<Basket> baskets = new Repository<Basket>();
+            IRepository<Goods> goods = new Repository<Goods>();
+            IRepository<User> users = new Repository<User>();
 
 
             switch (tableName)
@@ -66,7 +64,7 @@ namespace HomeWork1
                     break;
             }
         }
-        private static void AddInfo(ISession session)
+        private static void AddInfo()
         {
             var tableNames = DbInfoService.GetTableNames();
             var tableName = GetInputInterface(tableNames);
@@ -76,13 +74,16 @@ namespace HomeWork1
             switch (tableName)
             {
                 case "User":
-                    addData.AddUser(session);
+                    var user = GetUserInfo();
+                    addData.AddUser(user);
                     break;
                 case "Goods":
-                    addData.AddGood(session);
+                    var good = GetGoodInfo();
+                    addData.AddGood(good);
                     break;
                 case "Basket":
-                    addData.AddBasket(session);
+                    var basket = GetBasketInfo();
+                    addData.AddBasket(basket);
                     break;
                 default:
                     Console.WriteLine("Передано некорректное наименование.");
@@ -104,6 +105,58 @@ namespace HomeWork1
                 "Введите название таблицы для вывода содержимого, для вывода всех таблиц введите 'All':");
             var tableName = Console.ReadLine();
             return tableName;
+        }
+
+        private static User GetUserInfo()
+        {
+           Console.WriteLine("Введите имя:");
+           var userName = Console.ReadLine();
+           Console.WriteLine("Введите фамилию:");
+           var userLastName = Console.ReadLine();
+
+           var user = new User()
+           {
+                    FirstName = userName,
+                    LastName = userLastName
+           };
+
+           return user;
+        }
+
+        private static Goods GetGoodInfo()
+        {
+            Console.WriteLine("Введите цену:");
+            var price = decimal.Parse(Console.ReadLine());
+            Console.WriteLine("Введите наименование:");
+            var name = Console.ReadLine();
+            Console.WriteLine("Введите описание:");
+            var description = Console.ReadLine();
+
+            var good = new Goods()
+            {
+                Price = price,
+                Name = name,
+                Description = description
+
+            };
+
+            return good;
+        }
+
+        private static Basket GetBasketInfo()
+        {
+            Console.WriteLine("Введите id пользователя:");
+            var userId = int.Parse(Console.ReadLine());
+            Console.WriteLine("Введите id товара:");
+            var orderId = int.Parse(Console.ReadLine());
+
+            var basket = new Basket()
+            {
+                UserId = userId,
+                GoodsId = orderId
+            };
+
+            return basket;
         }
     }
 }

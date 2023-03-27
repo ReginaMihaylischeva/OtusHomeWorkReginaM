@@ -9,11 +9,10 @@ namespace HomeWork1
 {
     public sealed class Repository<IEntity> : IRepository<IEntity>
     {
-        private ISession session;
+        private ISession session = DbInfoService.GetSession();
 
-        public Repository(ISession session)
+        public Repository()
         {
-            this.session = session;
         }
 
         public void Save(IEntity item)
